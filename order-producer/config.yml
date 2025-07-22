@@ -1,0 +1,12 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+
+rabbitmq:
+  host: "localhost"
+  port: 5672
+  username: "coffee"
+  password: "coffee"
+  exchange: "orders-exchange"
+  queue: "orders-queue"
