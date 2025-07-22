@@ -21,9 +21,9 @@ public class ProducerApplication extends Application<ProducerConfiguration> {
     }
 
     @Override
-    public void run(final ProducerConfiguration configuration,
-                    final Environment environment) {
-        // TODO: implement application
+    public void run(ProducerConfiguration cfg, Environment env) throws Exception {
+        RabbitMqService mq = new RabbitMqService(cfg);
+        env.jersey().register(new OrderResource(mq));
     }
 
 }

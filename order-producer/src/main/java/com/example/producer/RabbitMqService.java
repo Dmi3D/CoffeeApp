@@ -1,4 +1,3 @@
-// src/main/java/com/example/producer/RabbitMqService.java
 package com.example.producer;
 
 import com.rabbitmq.client.*;
@@ -7,8 +6,8 @@ public class RabbitMqService {
     private final Channel channel;
     private final String exchange;
 
-    public RabbitMqService(ProducerConfig cfg) throws Exception {
-        ProducerConfig.RabbitMqConfig rmq = cfg.getRabbitmq();
+    public RabbitMqService(ProducerConfiguration cfg) throws Exception {
+        ProducerConfiguration.RabbitMqConfig rmq = cfg.getRabbitmq();
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(rmq.host);
         factory.setPort(rmq.port);
