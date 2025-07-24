@@ -1,4 +1,32 @@
-logging:
-  level: INFO
-  loggers:
-    com.example: DEBUG
+server:
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: 8081
+
+database:
+  driverClass: org.postgresql.Driver
+  user:        coffee
+  password:    coffee
+  url:         jdbc:postgresql://localhost:5432/coffee_orders
+
+rabbitmq:
+  host:     localhost
+  port:     5672
+  username: coffee
+  password: coffee
+  exchange: orders-exchange
+  queue:    orders-queue
+
+cors:
+  allowedOrigins:
+    - "http://localhost:3000"
+  allowedMethods:
+    - "GET"
+    - "POST"
+    - "OPTIONS"
+  allowedHeaders:
+    - "Content-Type"
+    - "Authorization"

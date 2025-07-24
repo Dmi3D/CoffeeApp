@@ -19,7 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Consumes(MediaType.APPLICATION_JSON)
 public class OrderResource {
     private final RabbitMqService mq;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper()
+            .findAndRegisterModules();
 
     public static class OrderRequest {
         public String customerName;
@@ -51,10 +52,8 @@ public class OrderResource {
             byte[] payload = mapper.writeValueAsBytes(coffeeOrderEvent);
             mq.publish(payload);
 
-            // 5) Return 202 Accepted with the orderId
             return Response.accepted(Map.of("orderId", id)).build();
         } catch (Exception e) {
-            // on failure, return 500 with an error message
             return Response.serverError()
                     .entity(Map.of("error", e.getMessage()))
                     .build();

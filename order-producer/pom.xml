@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dropwizard.version>2.1.0</dropwizard.version>
         <java.version>17</java.version>
-        <!-- Use this for the shaded jar’s entry point -->
+        <!-- Use this for the shaded jar's entry point -->
         <mainClass>com.example.producer.ProducerApplication</mainClass>
     </properties>
 
@@ -37,6 +37,11 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
+        </dependency>
+        <!-- Add CORS Bundle -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jetty</artifactId>
         </dependency>
         <!-- RabbitMQ client -->
         <dependency>
@@ -79,6 +84,7 @@
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${mainClass}</mainClass>
                                 </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                         </configuration>
                     </execution>

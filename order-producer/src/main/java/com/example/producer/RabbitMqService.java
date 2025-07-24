@@ -13,10 +13,14 @@ public class RabbitMqService {
         factory.setPort(rmq.port);
         factory.setUsername(rmq.username);
         factory.setPassword(rmq.password);
+        
         Connection conn = factory.newConnection();
-        this.channel  = conn.createChannel();
+        this.channel = conn.createChannel();
         this.exchange = rmq.exchange;
-        channel.exchangeDeclare(exchange, BuiltinExchangeType.FANOUT, true);
+        
+        channel.exchangeDeclare(rmq.exchange, BuiltinExchangeType.FANOUT, true);
+        channel.queueDeclare(rmq.queue, true, false, false, null);
+        channel.queueBind(rmq.queue, rmq.exchange, "");
     }
 
     public void publish(byte[] payload) throws Exception {

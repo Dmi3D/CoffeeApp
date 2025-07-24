@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: coffee-rabbitmq
+    ports:
+      - "5672:5672"     # AMQP port for producer/consumer
+      - "15672:15672"   # HTTP UI at http://localhost:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: coffee
+      RABBITMQ_DEFAULT_PASS: coffee
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:14
+    container_name: coffee-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: coffee_orders
+      POSTGRES_USER: coffee
+      POSTGRES_PASSWORD: coffee
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  rabbitmq_data:

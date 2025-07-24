@@ -17,7 +17,7 @@ public interface OrderDao {
         :numShots, :syrups, 'PENDING', :createdAt, :createdAt
       )
     """)
-    void insert(@BindBean Order o);
+    void insert(@BindBean Order order);
 
     @SqlQuery("""
       SELECT * FROM orders
