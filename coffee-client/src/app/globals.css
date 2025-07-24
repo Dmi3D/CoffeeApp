@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+  /* example: change default sans font */
+  --font-sans: "Inter var", system-ui, sans-serif;
+  /* example: extend colors */
+  --color-primary-500: okhsl(220 90% 55%);
+  /* example: custom breakpoint */
+  --breakpoint-2xl: 1440px;
+}

@@ -21,6 +21,9 @@ Thumbs.db
 /yarn-debug.log*
 /yarn-error.log*
 .env
+/coffee-client/.next/
+/coffee-client/node_modules/
+/coffee-client/.turbo/
 
 # ======================
 # Maven / Java
