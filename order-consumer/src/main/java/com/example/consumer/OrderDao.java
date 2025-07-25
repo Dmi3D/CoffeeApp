@@ -1,11 +1,14 @@
 package com.example.consumer;
 
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 public interface OrderDao {
     @SqlUpdate("""
@@ -26,4 +29,21 @@ public interface OrderDao {
     """)
     @RegisterBeanMapper(Order.class)
     List<Order> listPending();
+
+    @SqlUpdate("""
+      UPDATE orders
+      SET status       = :status,
+          completed_at = :completedAt,
+          cancelled_at = :cancelledAt,
+          updated_at   = :now
+      WHERE id = :id
+    """)
+    void updateStatus(
+            @Bind("id")           UUID id,
+            @Bind("status")       String  status,
+            @Bind("completedAt")  Instant completedAt,
+            @Bind("cancelledAt")  Instant cancelledAt,
+            @Bind("now")          Instant now
+    );
+
 }

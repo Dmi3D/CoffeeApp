@@ -1,18 +1,37 @@
 package com.example.consumer;
 
 import io.dropwizard.Application;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.jdbi3.JdbiFactory;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.jdbi.v3.core.Jdbi;
+import io.dropwizard.migrations.MigrationsBundle;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
+import io.dropwizard.migrations.MigrationsBundle;
+import io.dropwizard.setup.Bootstrap;
 
 public class ConsumerApplication extends Application<ConsumerConfiguration> {
     public static void main(String[] args) throws Exception {
         new ConsumerApplication().run(args);
+    }
+
+    @Override
+    public void initialize(final Bootstrap<ConsumerConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<ConsumerConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(ConsumerConfiguration config) {
+                return config.getDataSourceFactory();
+            }
+
+            @Override
+            public String getMigrationsFileName() {
+                return "db/changelog-master.xml";
+            }
+        });
     }
 
     @Override

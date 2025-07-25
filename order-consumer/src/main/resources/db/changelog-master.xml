@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+       http://www.liquibase.org/xml/ns/dbchangelog
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!--
+        1) Create initial orders table
+    -->
+    <changeSet id="1-create-orders-table" author="you">
+        <createTable tableName="orders">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="customer_name" type="varchar(100)"/>
+            <column name="coffee_type"    type="varchar(50)"/>
+            <column name="milk_type"      type="varchar(50)"/>
+            <column name="num_shots"      type="integer"/>
+            <column name="syrups"         type="text[]"/>
+            <column name="status"         type="varchar(20)" defaultValue="pending"/>
+            <column name="created_at"     type="timestamp"/>
+            <column name="completed_at"   type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <!--
+        2) Add a cancelled_at timestamp for cancelled orders
+    -->
+    <changeSet id="2-add-cancelled_at-column" author="you">
+        <addColumn tableName="orders">
+            <column name="cancelled_at" type="timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <!--
+        3) Add updated_at timestamp (whoops)
+    -->
+    <changeSet id="3-add-updated_at-column" author="you">
+        <addColumn tableName="orders">
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,5 +1,7 @@
 package com.example.consumer;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +13,15 @@ public class Order {
     private String milkType;
     private int numShots;
     private List<String> syrups;
+
+    @JsonProperty("createdAt")
     private Instant createdAt;
+
+    @JsonProperty("completedAt")
+    private Instant completedAt;
+
+    @JsonProperty("cancelledAt")
+    private Instant cancelledAt;
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
@@ -33,4 +43,10 @@ public class Order {
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getCompletedAt() { return completedAt; }
+    public void setCompletedAt(Instant completedAt) { this.completedAt = completedAt; }
+
+    public Instant getCancelledAt() { return cancelledAt; }
+    public void setCancelledAt(Instant cancelledAt) { this.cancelledAt = cancelledAt; }
 }
