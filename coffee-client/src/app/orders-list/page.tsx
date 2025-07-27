@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 type Order = {
     id: string;
@@ -19,24 +18,28 @@ export default function OrdersListPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
-
-    // fetch pending orders
-    const load = async () => {
-        try {
-            const res = await fetch("http://localhost:8081/orders", {
-                cache: "no-store",
-            });
-            if (!res.ok) throw new Error("Failed to fetch pending orders");
-            setOrders(await res.json());
-        } catch (err: any) {
-            setError(err.message);
-        }
-    };
 
     useEffect(() => {
+        const load = async () => {
+            setError(null);
+            try {
+                const res = await fetch("http://localhost:8081/orders", { cache: "no-store" });
+                if (!res.ok) throw new Error("Failed to fetch pending orders");
+                const contentType = res.headers.get("content-type") || "";
+                if (!contentType.includes("application/json")) {
+                    throw new Error("Invalid response format - expected JSON");
+                }
+                const text = await res.text();
+                const data: Order[] = text.trim() ? JSON.parse(text) : [];
+                setOrders(data);
+            } catch (err: any) {
+                setError(err.message);
+                console.error("Error loading orders:", err);
+            }
+        };
         load();
     }, []);
+
 
     // format createdAt as "Xm Ys ago"
     function formatTimeAgo(iso: string) {
@@ -48,28 +51,34 @@ export default function OrdersListPage() {
         return m > 0 ? `${m}m ${s}s ago` : `${s}s ago`;
     }
 
-    // handle ready / cancel
     const handle = async (id: string, action: "complete" | "cancel") => {
         setError(null);
-        setLoadingIds((ids) => new Set(ids).add(id));
+        setLoadingIds(ids => new Set(ids).add(id));
         try {
             const res = await fetch(
                 `http://localhost:8081/orders/orders/${id}/${action}`,
                 { method: "POST" }
             );
             if (!res.ok) throw new Error(`${action} failed`);
-            // remove from list
-            setOrders((o) => o.filter((x) => x.id !== id));
+            // Safe consume any JSON or ignore empty response
+            const ct = res.headers.get("content-type") || "";
+            if (ct.includes("application/json")) {
+                const text = await res.text();
+                if (text.trim()) JSON.parse(text);
+            }
+            setOrders(o => o.filter(x => x.id !== id));
         } catch (err: any) {
             setError(err.message);
+            console.error(`Error handling order ${action}:`, err);
         } finally {
-            setLoadingIds((ids) => {
+            setLoadingIds(ids => {
                 const next = new Set(ids);
                 next.delete(id);
                 return next;
             });
         }
     };
+
 
     return (
         <main className="p-8 max-w-4xl mx-auto">
