@@ -1,5 +1,7 @@
 # CoffeeApp
 
+<img width="3840" height="1357" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-07-27-164857" src="https://github.com/user-attachments/assets/ecac6b35-10ff-4a0d-970d-86a04e9b6fb8" />
+
 This repository contains three services, a seed script, and infrastructure definitions to run them together:
 
 - **order-producer**: Dropwizard service that publishes new coffee orders to RabbitMQ
