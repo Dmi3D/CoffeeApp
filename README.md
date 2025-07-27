@@ -1,79 +1,89 @@
 # CoffeeApp
 
-<img width="3840" height="486" alt="Untitled diagram _ Mermaid Chart-2025-07-26-120843" src="https://github.com/user-attachments/assets/4c65943d-9a1e-43de-9411-b616798fc1dc" />
+This repository contains three services, a seed script, and infrastructure definitions to run them together:
 
-
-This repository contains three services and the infrastructure needed to run them together:
-
-- **order-producer**: a Dropwizard service that publishes new coffee orders to RabbitMQ
-- **order-consumer**: a Dropwizard service that consumes orders from RabbitMQ and writes them to PostgreSQL, with schema managed by Liquibase migrations
-- **coffee-client**: a React/Next.js frontend for placing and viewing orders
+- **order-producer**: Dropwizard service that publishes new coffee orders to RabbitMQ
+- **order-consumer**: Dropwizard service that consumes messages from RabbitMQ, writes orders to PostgreSQL, indexes into OpenSearch, and exposes both order and analytics endpoints. Schema changes are managed with Liquibase migrations.
+- **coffee-client**: React/Next.js frontend for placing orders, viewing pending orders, and displaying serve‑time analytics
+- **scripts/seed.js**: Node.js script to bulk‑seed PostgreSQL and OpenSearch with mock orders
 
 ## Prerequisites
 
-- Docker & Docker Compose
-- Java 17 + Maven
+- Docker & Docker Compose
+- Java 17 + Maven
 - Node.js & npm
 
-## 1. Start infrastructure
+## 1. Start Infrastructure
 
-From the project root, run:
+From the project root run:
 
+```bash
 docker-compose up -d
+```
 
 This will launch:
 
-- **postgres** (port 5432, user=`coffee`, database=`coffee_orders`)
-- **rabbitmq** (port 5672, vhost=`/`, user/password=`coffee`/`coffee`)
+- **postgres** (port 5432, user `coffee`, database `coffee_orders`)
+- **rabbitmq** (port 5672, vhost `/`, user/password `coffee`/`coffee`)
+- **opensearch** (port 9200, single-node, security disabled)
 
-## 2. Apply database migrations
+## 2. Apply Database Migrations
 
-All schema changes are tracked by Liquibase in **order-consumer**. From the project root:
+Liquibase is configured in **order-consumer**. Run this once (and again only when you add new change‑sets):
 
 ```bash
-cd order-consumer\
-mvn clean package\
+cd order-consumer
+docker-compose exec postgres mvn clean package
 java -jar target/order-consumer-1.0-SNAPSHOT.jar db migrate config.yml
 ```
 
-Liquibase will record which migrations have already been applied, so you only ever need to run this once.
+Liquibase records applied migrations in the `databasechangelog` table.
 
-## 3. Start backend services
+## 3. (Optional) Seed with Mock Data
+
+To generate 1000 realistic orders and bulk‑index into OpenSearch:
+
+```bash
+cd scripts
+npm install pg @opensearch-project/opensearch faker
+node seed.js db      # truncates orders and inserts 1000 orders
+node seed.js os      # bulk-indexs orders into OpenSearch
+```
+
+## 4. Start Backend Services
 
 ### order-producer
 
 ```bash
-cd order-producer\
-mvn clean package\
+cd order-producer
+mvn clean package
 java -jar target/order-producer-1.0-SNAPSHOT.jar server config.yml
 ```
 
-It runs on port **8080**.
+Runs on port **8080**.
 
 ### order-consumer
 
 ```bash
-cd order-consumer\
+cd order-consumer
 java -jar target/order-consumer-1.0-SNAPSHOT.jar server config.yml
 ```
 
-It runs on port **8081**.
+Runs on port **8081**.
 
-## 4. Run the frontend
+## 5. Run the Frontend
 
 ```bash
-cd coffee-client\
-npm install\
+cd coffee-client
+npm install
 npm run dev
 ```
 
-Open your browser at **[http://localhost:3000](http://localhost:3000)**.
+Open your browser at http://localhost:3000
 
-## 5. Test the end-to-end flow
-
-1. Place an order in the frontend → producer publishes to RabbitMQ
-2. Consumer picks up the message → inserts into Postgres
-3. View Orders page → shows pending orders from the database
+- **Order Page** → POST `/orders`
+- **Pending Orders Page** → GET `/orders` + “Ready”/“Cancel” actions
+- **Analytics Page** → GET `/search/time-to-serve` for weekly serve‑time chart
 
 ## Cleanup
 
@@ -81,6 +91,4 @@ Open your browser at **[http://localhost:3000](http://localhost:3000)**.
 docker-compose down
 ```
 
-Stops and removes the Postgres and RabbitMQ containers.
-
-Enjoy ☕!
+Enjoy your ☕ coffee analytics platform!
