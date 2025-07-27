@@ -30,3 +30,9 @@ cors:
   allowedHeaders:
     - "Content-Type"
     - "Authorization"
+
+opensearch:
+  host: localhost
+  port: 9200
+  scheme: http
+  index: orders

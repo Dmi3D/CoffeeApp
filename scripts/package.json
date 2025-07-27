@@ -1,0 +1,16 @@
+{
+  "name": "coffee-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "seed:db": "node scripts/seed.js db",
+    "seed:os": "node scripts/seed.js os"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.0.2",
+    "@opensearch-project/opensearch": "^3.5.1",
+    "faker": "^5.5.3",
+    "pg": "^8.16.3",
+    "uuid": "^9.0.0"
+  }
+}

@@ -3,8 +3,8 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
-       http://www.liquibase.org/xml/ns/dbchangelog
-       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!--
         1) Create initial orders table
@@ -41,6 +41,28 @@
         <addColumn tableName="orders">
             <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
         </addColumn>
+    </changeSet>
+
+    <!--
+        4) Enable pgcrypto extension & give orders.id a gen_random_uuid() default
+    -->
+    <changeSet id="4-add-uuid-default" author="you">
+        <!-- if pgcrypto already exists, skip -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM pg_extension WHERE extname='pgcrypto';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <sql>CREATE EXTENSION IF NOT EXISTS pgcrypto;</sql>
+
+        <!-- only add the default if the column exists -->
+        <addDefaultValue
+                tableName="orders"
+                columnName="id"
+                columnDataType="UUID"
+                defaultValueComputed="gen_random_uuid()"/>
     </changeSet>
 
 </databaseChangeLog>

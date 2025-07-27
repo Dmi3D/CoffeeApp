@@ -21,6 +21,7 @@ public class ConsumerConfiguration extends Configuration {
         return database;
     }
 
+    @Valid
     @NotNull
     @JsonProperty("rabbitmq")
     private RabbitMqConfig rabbitmq = new RabbitMqConfig();
@@ -38,6 +39,8 @@ public class ConsumerConfiguration extends Configuration {
         @NotNull @JsonProperty public String queue;
     }
 
+    @Valid
+    @NotNull
     @JsonProperty("cors")
     private CorsConfiguration cors = new CorsConfiguration();
 
@@ -64,5 +67,28 @@ public class ConsumerConfiguration extends Configuration {
         public void setAllowedMethods(List<String> methods) { allowedMethods = methods; }
         public List<String> getAllowedHeaders() { return allowedHeaders; }
         public void setAllowedHeaders(List<String> headers) { allowedHeaders = headers; }
+    }
+
+    @Valid
+    @NotNull
+    @JsonProperty("opensearch")
+    private OpenSearchFactory opensearch = new OpenSearchFactory();
+
+    public OpenSearchFactory getOpensearch() { return opensearch; }
+
+    public static class OpenSearchFactory {
+        @JsonProperty private String host;
+        @JsonProperty  private int port;
+        @JsonProperty  private String scheme;
+        @JsonProperty  private String index;
+
+        public String getHost() { return host; }
+        public void setHost(String host) { this.host = host; }
+        public int getPort() { return port; }
+        public void setPort(int port) { this.port = port; }
+        public String getScheme() { return scheme; }
+        public void setScheme(String scheme) { this.scheme = scheme; }
+        public String getIndex() { return index; }
+        public void setIndex(String index) { this.index = index; }
     }
 }

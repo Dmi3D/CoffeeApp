@@ -13,9 +13,13 @@ public class Order {
     private String milkType;
     private int numShots;
     private List<String> syrups;
+    private String status;
 
     @JsonProperty("createdAt")
     private Instant createdAt;
+
+    @JsonProperty("updatedAt")
+    private Instant updatedAt;
 
     @JsonProperty("completedAt")
     private Instant completedAt;
@@ -41,8 +45,14 @@ public class Order {
     public List<String> getSyrups() { return syrups; }
     public void setSyrups(List<String> syrups) { this.syrups = syrups; }
 
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
     public Instant getCompletedAt() { return completedAt; }
     public void setCompletedAt(Instant completedAt) { this.completedAt = completedAt; }

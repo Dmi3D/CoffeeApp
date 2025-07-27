@@ -17,14 +17,14 @@ public interface OrderDao {
         status, created_at, updated_at
       ) VALUES (
         :id, :customerName, :coffeeType, :milkType,
-        :numShots, :syrups, 'PENDING', :createdAt, :createdAt
+        :numShots, :syrups, 'pending', :createdAt, :createdAt
       )
     """)
     void insert(@BindBean Order order);
 
     @SqlQuery("""
       SELECT * FROM orders
-      WHERE status = 'PENDING'
+      WHERE status = 'pending'
       ORDER BY created_at DESC
     """)
     @RegisterBeanMapper(Order.class)
